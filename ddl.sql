@@ -1,26 +1,4 @@
-create
-    database RussianJudgementArchive;
-
-create table judge
-(
-    id    int primary key,
-    name  varchar(50) not null,
-    class char(20)    not null
-);
-
-create table lawyer
-(
-    id   int primary key,
-    name varchar(50) not null
-);
-
-
-create table prosecutor
-(
-    id   int primary key,
-    name varchar(50) not null,
-    rnk  char(20)    not null
-);
+-- create database RussianJudgementArchive;
 
 
 create table citizen
@@ -37,6 +15,31 @@ create table act
     num      int       not null,
     accepted timestamp not null,
     content  text
+);
+
+
+create table judge
+(
+    id        int primary key,
+    class     int not null,
+    citizenId int not null,
+    foreign key (citizenId) references citizen (id)
+);
+
+create table lawyer
+(
+    id        int primary key,
+    citizenId int not null,
+    foreign key (citizenId) references citizen (id)
+);
+
+
+create table prosecutor
+(
+    id        int primary key,
+    rnk       int not null,
+    citizenId int not null,
+    foreign key (citizenId) references citizen (id)
 );
 
 
