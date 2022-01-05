@@ -55,6 +55,10 @@ values (1001, now(), 101, 11, 'beat'),
        (1003, now(), 102, 11, 'smoke'),
        (1004, now(), 103, 11, 'smoke'),
        (1005, now(), 104, 11, 'smoke'),
+       (1006, now(), 105, 13, 'steal'),
+       (1007, now(), 104, 13, 'genocid'),
+       (1008, now(), 103, 13, 'genocid'),
+       (1009, now(), 104, 13, 'steal'),
        (1100, now(), 103, 12, 'smoke');
 
 insert into resolution(resolutionId, created, applicationId, actId, blameCitizenId, lawyerId, judgeId, isGuilty)
@@ -63,4 +67,8 @@ values (2001, now(), 1001, 105, 151, 21, 1, true),
        (2003, now(), 1003, 228, 153, 23, 3, false),
        (2004, now(), 1004, 228, 153, 23, 3, false),
        (2005, now(), 1005, 228, 153, 23, 3, false),
+       (2006, now(), 1006, 228, 154, 22, 2, false),
+       (2007, now(), 1007, 105, 151, 21, 1, true),
+       (2008, now(), 1008, 105, 151, 21, 1, true),
+       (2009, now(), 1009, 159, 152, 21, 1, true),
        (2100, now(), 1100, 228, 153, 23, 3, true);
