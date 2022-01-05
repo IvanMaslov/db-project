@@ -3,15 +3,15 @@
 
 create table citizen
 (
-    id       int primary key,
-    name     varchar(50) not null,
-    passport char(20)    not null
+    citizenId int primary key,
+    name      varchar(50) not null,
+    passport  char(20)    not null
 );
 
 
 create table act
 (
-    id       int primary key,
+    actId    int primary key,
     num      int       not null,
     accepted timestamp not null,
     content  text
@@ -20,53 +20,65 @@ create table act
 
 create table judge
 (
-    id        int primary key,
+    judgeId   int primary key,
     class     int not null,
     citizenId int not null,
-    foreign key (citizenId) references citizen (id)
+    foreign key (citizenId) references citizen (citizenId)
 );
 
 create table lawyer
 (
-    id        int primary key,
+    lawyerId  int primary key,
     citizenId int not null,
-    foreign key (citizenId) references citizen (id)
+    foreign key (citizenId) references citizen (citizenId)
 );
 
 
 create table prosecutor
 (
-    id        int primary key,
-    rnk       int not null,
-    citizenId int not null,
-    foreign key (citizenId) references citizen (id)
+    prosecutorId int primary key,
+    rnk          int not null,
+    citizenId    int not null,
+    foreign key (citizenId) references citizen (citizenId)
 );
 
 
 create table application
 (
-    id                  int primary key,
-    created             timestamp not null,
-    applicantCitizen    int       not null,
-    applicantProsecutor int       not null,
-    content             text,
-    foreign key (applicantCitizen) references citizen (id),
-    foreign key (applicantProsecutor) references prosecutor (id)
+    applicationId int primary key,
+    created       timestamp not null,
+    askCitizenId  int       not null,
+    prosecutorId  int       not null,
+    content       text,
+    foreign key (askCitizenId) references citizen (citizenId),
+    foreign key (prosecutorId) references prosecutor (prosecutorId)
 );
 
 
 create table resolution
 (
-    id            int primary key,
-    created       timestamp not null,
-    applicationId int       not null,
-    blameJudge    int       not null,
-    blameCitizen  int       not null,
-    blameAct      int       not null,
-    isGuilty      bool      not null,
-    content       text,
-    foreign key (applicationId) references application (id),
-    foreign key (blameJudge) references judge (id),
-    foreign key (blameCitizen) references citizen (id),
-    foreign key (blameAct) references act (id)
+    resolutionId   int primary key,
+    created        timestamp not null,
+    applicationId  int       not null,
+    judgeId        int       not null,
+    lawyerId       int       not null,
+    blameCitizenId int       not null,
+    actId          int       not null,
+    isGuilty       bool      not null,
+    content        text,
+    foreign key (applicationId) references application (applicationId),
+    foreign key (judgeId) references judge (judgeId),
+    foreign key (blameCitizenId) references citizen (citizenId),
+    foreign key (lawyerId) references lawyer (lawyerId),
+    foreign key (actId) references act (actId)
 );
+
+create index actNum using hash on act (num);
+create index prosecutorRanks using btree on prosecutor (rnk);
+
+create index actTime using btree on act (accepted);
+create index applicationTime using btree on application (created);
+create index resolutionTime using btree on resolution (created);
+
+-- заявление до решения
+-- закон обратной силы не имеет
