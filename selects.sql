@@ -11,8 +11,7 @@ limit 1;
 -- лучший прокурор
 -- Vor_dolzhen_sidet_v_turme
 select name, cast(sum(isGuilty) as float) / cast(count(*) as float) as successRate
-from resolution r
-         natural join (select applicationId, prosecutorId from application) a
+from court
          natural join prosecutor p
          natural join citizen c
 group by prosecutorId
@@ -44,8 +43,7 @@ where imprisonments >= 3;
 select name as judgeName, prosecutorName, imprisonment
 from (select name as prosecutorName, judgeId, imprisonment
       from (select prosecutorId, judgeId, count(distinct (blameCitizenId)) as imprisonment
-            from resolution r
-                     natural join (select applicationId, prosecutorId from application) a
+            from court
                      natural join prosecutor p
             where isGuilty = true
             group by prosecutorId, judgeId

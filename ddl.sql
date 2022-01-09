@@ -5,7 +5,8 @@ create table citizen
 (
     citizenId int primary key,
     name      varchar(50) not null,
-    passport  char(20)    not null
+    passport  char(20)    not null,
+    check ( passport regexp '^[a-zA-Z0-9\_]{5,20}$' )
 );
 
 
@@ -81,5 +82,45 @@ create index actTime using btree on act (accepted);
 create index applicationTime using btree on application (created);
 create index resolutionTime using btree on resolution (created);
 
+create view court as
+select resolutionId,
+       applicationId,
+       created as resolutionCreated,
+       applicationCreated,
+       askCitizenId,
+       blameCitizenId,
+       prosecutorId,
+       lawyerId,
+       judgeId,
+       actId,
+       isGuilty
+from resolution r
+         natural join (select applicationId, created as applicationCreated, askCitizenId, prosecutorId
+                       from application) a;
+
 -- заявление до решения
+delimiter //
+create trigger consistentDates
+    before insert
+    on resolution
+    for each row
+begin
+    if (select created from application a where a.applicationId = NEW.applicationId) > NEW.created then
+        signal sqlstate '10001' set message_text =
+                'Inconsistent times of applicationCreated and resolutionCreated';
+    end if;
+end //
+
 -- закон обратной силы не имеет
+create trigger doNotReversLaw
+    before insert
+    on resolution
+    for each row
+begin
+    if (select created from application a where a.applicationId = NEW.applicationId) >
+       (select accepted from act a2 where a2.actId = NEW.actId)
+    then
+        signal sqlstate '10002' set message_text =
+                'Inconsistent resolution on act not active then application created';
+    end if;
+end //
