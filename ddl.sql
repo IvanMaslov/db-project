@@ -74,6 +74,7 @@ create table resolution
 );
 
 create index actNum using hash on act (num);
+create index judgeClasses using btree on judge (class);
 create index prosecutorRanks using btree on prosecutor (rnk);
 
 create index actTime using btree on act (accepted);
