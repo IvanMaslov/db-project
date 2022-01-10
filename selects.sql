@@ -1,5 +1,4 @@
 -- лучший адвокат
--- Better_call_Soul
 select name, 1.0 - cast(sum(isGuilty) as float) / cast(count(*) as float) as successRate
 from resolution r
          natural join lawyer l
@@ -9,7 +8,6 @@ order by successRate desc
 limit 1;
 
 -- лучший прокурор
--- Vor_dolzhen_sidet_v_turme
 select name, cast(sum(isGuilty) as float) / cast(count(*) as float) as successRate
 from court
          natural join prosecutor p
@@ -28,7 +26,7 @@ group by judgeId
 order by randomRate
 limit 1;
 
--- три ходки
+-- граждане, получившие три или более срока
 -- Tri_kupola
 select name
 from (select name, sum(isGuilty) as imprisonments

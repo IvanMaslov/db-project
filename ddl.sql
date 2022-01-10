@@ -23,15 +23,13 @@ create table judge
 (
     judgeId   int primary key,
     class     int not null,
-    citizenId int not null,
-    foreign key (citizenId) references citizen (citizenId)
+    citizenId int not null references citizen (citizenId)
 );
 
 create table lawyer
 (
     lawyerId  int primary key,
-    citizenId int not null,
-    foreign key (citizenId) references citizen (citizenId)
+    citizenId int not null references citizen (citizenId)
 );
 
 
@@ -39,8 +37,7 @@ create table prosecutor
 (
     prosecutorId int primary key,
     rnk          int not null,
-    citizenId    int not null,
-    foreign key (citizenId) references citizen (citizenId)
+    citizenId    int not null references citizen (citizenId)
 );
 
 
@@ -48,11 +45,9 @@ create table application
 (
     applicationId int primary key,
     created       timestamp not null,
-    askCitizenId  int       not null,
-    prosecutorId  int       not null,
-    content       text,
-    foreign key (askCitizenId) references citizen (citizenId),
-    foreign key (prosecutorId) references prosecutor (prosecutorId)
+    askCitizenId  int       not null references citizen (citizenId),
+    prosecutorId  int       not null references prosecutor (prosecutorId),
+    content       text
 );
 
 
@@ -60,18 +55,13 @@ create table resolution
 (
     resolutionId   int primary key,
     created        timestamp not null,
-    applicationId  int       not null,
-    judgeId        int       not null,
-    lawyerId       int       not null,
-    blameCitizenId int       not null,
-    actId          int       not null,
+    applicationId  int       not null references application (applicationId),
+    judgeId        int       not null references judge (judgeId),
+    lawyerId       int       not null references lawyer (lawyerId),
+    blameCitizenId int       not null references citizen (citizenId),
+    actId          int       not null references act (actId),
     isGuilty       bool      not null,
-    content        text,
-    foreign key (applicationId) references application (applicationId),
-    foreign key (judgeId) references judge (judgeId),
-    foreign key (blameCitizenId) references citizen (citizenId),
-    foreign key (lawyerId) references lawyer (lawyerId),
-    foreign key (actId) references act (actId)
+    content        text
 );
 
 create index actNum using hash on act (num);
@@ -98,8 +88,8 @@ from resolution r
          natural join (select applicationId, created as applicationCreated, askCitizenId, prosecutorId
                        from application) a;
 
--- заявление до решения
 delimiter //
+-- заявление до решения
 create trigger consistentDates
     before insert
     on resolution
@@ -117,10 +107,63 @@ create trigger doNotReversLaw
     on resolution
     for each row
 begin
-    if (select created from application a where a.applicationId = NEW.applicationId) >
+    if (select created from application a where a.applicationId = NEW.applicationId) <
        (select accepted from act a2 where a2.actId = NEW.actId)
     then
         signal sqlstate '10002' set message_text =
                 'Inconsistent resolution on act not active then application created';
     end if;
+end //
+
+
+-- судья не король, сам себя судить не может
+create trigger prohibitedSelfJudge
+    before insert
+    on resolution
+    for each row
+begin
+    if (select citizenId from judge j where j.judgeId = NEW.judgeId) = NEW.blameCitizenId
+    then
+        signal sqlstate '10003' set message_text =
+                'Inconsistent resolution judge self judges';
+    end if;
+end //
+
+
+-- в судебной системе человек может занимать только один пост
+create procedure checkPerson($citizenId INT)
+    contains sql reads sql data
+begin
+    declare isProsecutor bool default exists(select * from prosecutor where citizenId = $citizenId);
+    declare isLawyer bool default exists(select * from lawyer where citizenId = $citizenId);
+    declare isJudge bool default exists(select * from judge where citizenId = $citizenId);
+    if isProsecutor or isLawyer or isJudge
+    then
+        signal sqlstate '10004' set message_text =
+                'Inconsistent state one person multi roles';
+    end if;
+end //
+
+create trigger prohibitedMultiJudge
+    before insert
+    on judge
+    for each row
+begin
+    call checkPerson(NEW.citizenId);
+end //
+
+create trigger prohibitedMultiLawyer
+    before insert
+    on lawyer
+    for each row
+begin
+    call checkPerson(NEW.citizenId);
+end //
+
+create trigger prohibitedMultiProsecutor
+    before insert
+    on prosecutor
+    for each row
+begin
+    call checkPerson(NEW.citizenId);
 end //
