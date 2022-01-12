@@ -64,12 +64,24 @@ create table resolution
     content        text
 );
 
-create index actNum using hash on act (num);
+-- сортировка по классу судей
+-- example: select * from resolution natural join judge where class >= 1 and isGuilty = true
 create index judgeClasses using btree on judge (class);
+
+-- сортировка по званию прокурора
+-- example: select * from resolution natural join prosecutor where rnk >= 15 and isGuilty = true
 create index prosecutorRanks using btree on prosecutor (rnk);
 
+-- получение нужных статей
+create index actNum using hash on act (num);
+
+-- сортировка временных данных для законов
 create index actTime using btree on act (accepted);
+
+-- сортировка временных данных для заявлений
 create index applicationTime using btree on application (created);
+
+-- сортировка временных данных для решений
 create index resolutionTime using btree on resolution (created);
 
 create view court as

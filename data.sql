@@ -26,8 +26,8 @@ values (1, 'J Norton', 'PASSPORT_000001'),
 
 insert into act (actId, num, accepted, content)
 values (105, 105, TIMESTAMP '1990-01-01 00:00:00', 'Killing'),
-       (159, 159, TIMESTAMP '1990-01-01 00:00:00', 'Fraud'),
-       (228, 228, TIMESTAMP '1990-01-01 00:00:00', 'Drugs');
+       (159, 159, TIMESTAMP '1990-01-02 00:00:00', 'Fraud'),
+       (228, 228, TIMESTAMP '1990-01-03 00:00:00', 'Drugs');
 
 insert
 into judge (judgeId, class, citizenId)
@@ -50,25 +50,25 @@ values (21, 21),
        (23, 23);
 
 insert into application (applicationId, created, askCitizenId, prosecutorId, content)
-values (1001, now(), 101, 11, 'beat'),
-       (1002, now(), 102, 11, 'smoke'),
-       (1003, now(), 102, 11, 'smoke'),
-       (1004, now(), 103, 11, 'smoke'),
-       (1005, now(), 104, 11, 'smoke'),
-       (1006, now(), 105, 13, 'steal'),
-       (1007, now(), 104, 13, 'genocid'),
-       (1008, now(), 103, 13, 'genocid'),
-       (1009, now(), 104, 13, 'steal'),
-       (1100, now(), 103, 12, 'smoke');
+values (1001, TIMESTAMP '2020-01-01 00:00:00', 101, 11, 'beat'),
+       (1002, TIMESTAMP '2020-01-02 00:00:00', 102, 11, 'smoke'),
+       (1003, TIMESTAMP '2020-01-03 00:00:00', 102, 11, 'smoke'),
+       (1004, TIMESTAMP '2020-01-04 00:00:00', 103, 11, 'smoke'),
+       (1005, TIMESTAMP '2020-01-05 00:00:00', 104, 11, 'smoke'),
+       (1006, TIMESTAMP '2020-01-06 00:00:00', 105, 13, 'steal'),
+       (1007, TIMESTAMP '2020-01-07 00:00:00', 104, 13, 'genocid'),
+       (1008, TIMESTAMP '2020-01-08 00:00:00', 103, 13, 'genocid'),
+       (1009, TIMESTAMP '2020-01-09 00:00:00', 104, 13, 'steal'),
+       (1100, TIMESTAMP '2020-01-10 00:00:00', 103, 12, 'smoke');
 
 insert into resolution(resolutionId, created, applicationId, actId, blameCitizenId, lawyerId, judgeId, isGuilty)
-values (2001, now(), 1001, 105, 151, 21, 1, true),
-       (2002, now(), 1002, 228, 152, 22, 2, true),
-       (2003, now(), 1003, 228, 153, 23, 3, false),
-       (2004, now(), 1004, 228, 153, 23, 3, false),
-       (2005, now(), 1005, 228, 153, 23, 3, false),
-       (2006, now(), 1006, 228, 154, 22, 2, false),
-       (2007, now(), 1007, 105, 151, 21, 1, true),
-       (2008, now(), 1008, 105, 151, 21, 1, true),
-       (2009, now(), 1009, 159, 152, 21, 1, true),
-       (2100, now(), 1100, 228, 153, 23, 3, true);
+values (2001, TIMESTAMP '2020-02-01 00:00:00', 1001, 105, 151, 21, 1, true),
+       (2002, TIMESTAMP '2020-02-02 00:00:00', 1002, 228, 152, 22, 2, true),
+       (2003, TIMESTAMP '2020-02-03 00:00:00', 1003, 228, 153, 23, 3, false),
+       (2004, TIMESTAMP '2020-02-04 00:00:00', 1004, 228, 153, 23, 3, false),
+       (2005, TIMESTAMP '2020-02-05 00:00:00', 1005, 228, 153, 23, 3, false),
+       (2006, TIMESTAMP '2020-02-06 00:00:00', 1006, 228, 154, 22, 2, false),
+       (2007, TIMESTAMP '2020-02-07 00:00:00', 1007, 105, 151, 21, 1, true),
+       (2008, TIMESTAMP '2020-02-08 00:00:00', 1008, 105, 151, 21, 1, true),
+       (2009, TIMESTAMP '2020-02-09 00:00:00', 1009, 159, 152, 21, 1, true),
+       (2100, TIMESTAMP '2020-02-10 11:11:11', 1100, 228, 153, 23, 3, true);
